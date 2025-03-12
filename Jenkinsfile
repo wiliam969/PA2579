@@ -14,14 +14,13 @@ pipeline {
         }
         stage('Setup Julia Environment') {
             steps {
-                // Instantiate your Julia project dependencies
-                sh 'julia --project=@. -e "using Pkg; Pkg.instantiate()"'
+                // Use bat instead of sh
+                bat 'julia --project=@. -e "using Pkg; Pkg.instantiate()"'
             }
         }
         stage('Run Tests') {
             steps {
-                // Run your MILP model tests (or main script)
-                sh 'julia --project=@. dsm_milp_with_graph.jl'
+                bat 'julia --project=@. dsm_milp_with_graph.jl'
             }
         }
     }
