@@ -9,8 +9,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Clone your repository from Git
-                git clone 'https://github.com/wiliam969/PA2579.git'
+                // Clone your repository from Git using the built-in git step
+                git url: 'https://github.com/wiliam969/PA2579.git'
             }
         }
         stage('Setup Julia Environment') {
@@ -30,11 +30,8 @@ pipeline {
         always {
             // Archive artifacts (for example, generated graphs or test results)
             archiveArtifacts artifacts: '**/DSM_solution.png', allowEmptyArchive: true
-            // You could also publish test reports if your tests output an XML report
-            // junit 'test_results.xml'
         }
         failure {
-            // Add notifications (email, Slack, etc.) if tests fail
             echo "Build failed. Check Jenkins logs for details."
         }
     }
