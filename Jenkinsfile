@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Clone your repository from Git
-                git 'https://github.com/wiliam969/PA2579.git'
+                git clone 'https://github.com/wiliam969/PA2579.git'
             }
         }
         stage('Setup Julia Environment') {
