@@ -7,10 +7,9 @@ pipeline {
     }
     
     stages {
-        stage('Checkout') {
+       stage('Checkout') {
             steps {
-                // Clone your repository from Git using the built-in git step
-                git url: 'https://github.com/wiliam969/PA2579.git'
+                git branch: 'main', url: 'https://github.com/wiliam969/PA2579.git'
             }
         }
         stage('Setup Julia Environment') {
