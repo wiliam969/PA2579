@@ -15,12 +15,12 @@ pipeline {
         stage('Setup Julia Environment') {
             steps {
                 // Use bat instead of sh
-                bat 'julia.exe --project=@. -e "using Pkg; Pkg.instantiate()"'
+                bat 'cmd julia.exe --project=@. -e "using Pkg; Pkg.instantiate()"'
             }
         }
         stage('Run Tests') {
             steps {
-                bat 'julia.exe --project=@. dsm_milp_with_graph.jl'
+                bat 'cmd julia.exe --project=@. dsm_milp_with_graph.jl'
             }
         }
     }
