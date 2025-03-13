@@ -4,7 +4,6 @@ pipeline {
     environment {
         // Set the project path (adjust if needed)
         JULIA_PROJECT = "${WORKSPACE}"
-        PATH = "C:\\Users\\wilia\\AppData\\Local\\Microsoft\\WindowsApps;${env.PATH}"
     }
     
     stages {
@@ -16,12 +15,12 @@ pipeline {
         stage('Setup Julia Environment') {
             steps {
                 // Use bat instead of sh
-                bat 'julia.exe --project -e "using Pkg; Pkg.instantiate()"'
+                bat 'C:\\Users\\wilia\\AppData\\Local\\Microsoft\\WindowsApps\\julia.exe --project -e "using Pkg; Pkg.instantiate()"'
             }
         }
         stage('Run Tests') {
             steps {
-                bat 'julia.exe --project -e "using Pkg; Pkg.test()"'
+                bat 'C:\\Users\\wilia\\AppData\\Local\\Microsoft\\WindowsApps\\julia.exe --project -e "using Pkg; Pkg.test()"'
             }
         }
     }
