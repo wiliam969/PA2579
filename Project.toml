@@ -1,0 +1,20 @@
+name = "PA2579"
+uuid = "e2f3f7e8-1234-4b8f-9a4d-abcdef123456"  # Replace with a real UUID if desired.
+version = "0.1.0"
+
+[deps]
+JuMP = "4076af6c-e467-56ae-b986-b466b2747886"
+GLPK = "b8f27783-e4a4-54fc-8e29-5350a27b70f0"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+BenchmarkTools = "6f1e606a-4a56-5265-8f7e-edd90b8e3e49"
+
+[compat]
+julia = "1.7"
+JuMP = "0.21"
+GLPK = "0.14"
+Plots = "1.24"
+CSV = "0.9"
+DataFrames = "1.2"
+BenchmarkTools = "1.2"
