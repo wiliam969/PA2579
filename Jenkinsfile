@@ -15,12 +15,13 @@ pipeline {
         stage('Setup Julia Environment') {
             steps {
                 // Use bat instead of sh
-                bat 'C:\\Users\\wilia\\AppData\\Local\\Microsoft\\WindowsApps\\julia.exe --project -e "using Pkg; Pkg.instantiate()"'
+                bat 'C:\\Users\\wilia\\AppData\\Local\\Programs\\Julia-1.11.4\\bin\\julia.exe --project -e "using Pkg; Pkg.instantiate()"'
+
             }
         }
         stage('Run Tests') {
             steps {
-                bat 'C:\\Users\\wilia\\AppData\\Local\\Microsoft\\WindowsApps\\julia.exe --project -e "using Pkg; Pkg.test()"'
+                bat 'C:\\Users\\wilia\\AppData\\Local\\Programs\\Julia-1.11.4\\bin\\julia.exe --project -e "using Pkg; Pkg.test()"'
             }
         }
     }
