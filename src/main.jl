@@ -53,6 +53,18 @@ struct ModelParameters
     co2_conventional::Float64
     co2_wind::Float64
     co2_solar::Float64
+    # Conventional costs:
+    conv_initial_cost::Float64      # $/MW initial (capital cost)
+    conv_maintenance_cost::Float64  # $/MW/hour maintenance
+    conv_production_cost::Float64   # $/MWh production cost (could be similar to generation_cost)
+    # Wind costs:
+    wind_initial_cost::Float64      
+    wind_maintenance_cost::Float64  
+    wind_production_cost::Float64   
+    # Solar costs:
+    solar_initial_cost::Float64     
+    solar_maintenance_cost::Float64 
+    solar_production_cost::Float64   
 end
 
 # Function to define default parameters and compute wind/solar availability factors
@@ -99,12 +111,33 @@ function default_parameters()
     co2_wind = 0.0          # Wind has near-zero operational emissions
     co2_solar = 0.0         # Solar likewise
 
+    # --- Cost parameters (example values) ---
+    # Conventional: assume $100,000 per MW initial, $50 per MW per hour maintenance,
+    # and production cost of $30/MWh.
+    conv_initial_cost = 100_000.0
+    conv_maintenance_cost = 50.0
+    conv_production_cost = 30.0
+
+    # Wind: $1,200,000 per MW initial, $20 per MW per hour maintenance, production cost $5/MWh.
+    wind_initial_cost = 1_200_000.0
+    wind_maintenance_cost = 20.0
+    wind_production_cost = 5.0
+
+    # Solar: $1,000,000 per MW initial, $15 per MW per hour maintenance, production cost $5/MWh.
+    solar_initial_cost = 1_000_000.0
+    solar_maintenance_cost = 15.0
+    solar_production_cost = 5.0
+
     return ModelParameters(T, L, Cup, Cdo, demand, ev_demand, generation_cost,
                            ConvCap, WindCap, wind_avail, SolarCap, solar_avail,
                            E_max, charge_cap, discharge_cap, eta_charge, eta_discharge,
                            startup_cost, shutdown_cost, startup_ramp,
                            wind_speeds, wind_cut_in, wind_rated, wind_cut_out,
-                           solar_irradiance, solar_degradation,co2_conventional, co2_wind, co2_solar)
+                           solar_irradiance, solar_degradation,
+                           co2_conventional, co2_wind, co2_solar,
+                           conv_initial_cost, conv_maintenance_cost, conv_production_cost,
+                           wind_initial_cost, wind_maintenance_cost, wind_production_cost,
+                           solar_initial_cost, solar_maintenance_cost, solar_production_cost)
 end
 
 # The rest of the model-building functions remain largely unchanged.

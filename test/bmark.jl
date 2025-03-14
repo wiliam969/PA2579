@@ -24,7 +24,10 @@ function update_parameters(default::ModelParameters, sim::Dict{String,Any})
             new_par.startup_cost, new_par.shutdown_cost, new_par.startup_ramp,
             new_par.wind_speeds, new_par.wind_cut_in, new_par.wind_rated, new_par.wind_cut_out,
             new_par.solar_irradiance, new_par.solar_degradation,
-            new_par.co2_conventional, new_par.co2_wind, new_par.co2_solar
+            new_par.co2_conventional, new_par.co2_wind, new_par.co2_solar,
+            new_par.conv_initial_cost, new_par.conv_maintenance_cost, new_par.conv_production_cost,
+            new_par.wind_initial_cost, new_par.wind_maintenance_cost, new_par.wind_production_cost,
+            new_par.solar_initial_cost, new_par.solar_maintenance_cost, new_par.solar_production_cost
         )
     end
     if haskey(sim, "startup_cost")
@@ -38,7 +41,10 @@ function update_parameters(default::ModelParameters, sim::Dict{String,Any})
             sim["startup_cost"], new_par.shutdown_cost, new_par.startup_ramp,
             new_par.wind_speeds, new_par.wind_cut_in, new_par.wind_rated, new_par.wind_cut_out,
             new_par.solar_irradiance, new_par.solar_degradation,
-            new_par.co2_conventional, new_par.co2_wind, new_par.co2_solar
+            new_par.co2_conventional, new_par.co2_wind, new_par.co2_solar,
+            new_par.conv_initial_cost, new_par.conv_maintenance_cost, new_par.conv_production_cost,
+            new_par.wind_initial_cost, new_par.wind_maintenance_cost, new_par.wind_production_cost,
+            new_par.solar_initial_cost, new_par.solar_maintenance_cost, new_par.solar_production_cost
         )
     end
     if haskey(sim, "co2_conventional")
@@ -52,7 +58,10 @@ function update_parameters(default::ModelParameters, sim::Dict{String,Any})
             new_par.startup_cost, new_par.shutdown_cost, new_par.startup_ramp,
             new_par.wind_speeds, new_par.wind_cut_in, new_par.wind_rated, new_par.wind_cut_out,
             new_par.solar_irradiance, new_par.solar_degradation,
-            sim["co2_conventional"], new_par.co2_wind, new_par.co2_solar
+            sim["co2_conventional"], new_par.co2_wind, new_par.co2_solar,
+            new_par.conv_initial_cost, new_par.conv_maintenance_cost, new_par.conv_production_cost,
+            new_par.wind_initial_cost, new_par.wind_maintenance_cost, new_par.wind_production_cost,
+            new_par.solar_initial_cost, new_par.solar_maintenance_cost, new_par.solar_production_cost
         )
     end
     return new_par
@@ -76,18 +85,40 @@ function benchmark_simulation(par::ModelParameters)
     # Check if the solution is optimal before extracting the objective value.
     if termination_status(model) != MOI.OPTIMAL
         println("Warning: Simulation did not solve optimally. Termination status: ", termination_status(model))
-        return elapsed, NaN, NaN  # Use NaN or missing to indicate failure.
+        return elapsed, NaN, NaN, NaN, NaN, NaN, NaN
     end
     
-    # Get objective value and compute CO₂ emissions.
     obj = objective_value(model)
     T = par.T
+
+    # Compute total CO₂ emissions.
     total_co2_conventional = sum(value(conventional_gen[t]) * par.co2_conventional for t in 1:T)
     total_co2_wind         = sum(value(wind_gen[t]) * par.co2_wind for t in 1:T)
     total_co2_solar        = sum(value(solar_gen[t]) * par.co2_solar for t in 1:T)
     total_co2 = total_co2_conventional + total_co2_wind + total_co2_solar
-    
-    return elapsed, obj, total_co2
+
+    # Compute production amounts (MWh) for each technology.
+    prod_conv = sum(value(conventional_gen[t]) for t in 1:T)
+    prod_wind = sum(value(wind_gen[t]) for t in 1:T)
+    prod_solar = sum(value(solar_gen[t]) for t in 1:T)
+
+    # Calculate production costs.
+    cost_conv_prod = prod_conv * par.conv_production_cost
+    cost_wind_prod = prod_wind * par.wind_production_cost
+    cost_solar_prod = prod_solar * par.solar_production_cost
+
+    # Fixed costs: initial and maintenance costs are assumed to be proportional to installed capacity.
+    # Here we assume the installed capacity is given by ConvCap, WindCap, and SolarCap.
+    cost_conv_fixed = par.ConvCap * (par.conv_initial_cost + par.conv_maintenance_cost * T)
+    cost_wind_fixed = par.WindCap * (par.wind_initial_cost + par.wind_maintenance_cost * T)
+    cost_solar_fixed = par.SolarCap * (par.solar_initial_cost + par.solar_maintenance_cost * T)
+
+    total_cost_conv = cost_conv_prod + cost_conv_fixed
+    total_cost_wind = cost_wind_prod + cost_wind_fixed
+    total_cost_solar = cost_solar_prod + cost_solar_fixed
+    total_cost = total_cost_conv + total_cost_wind + total_cost_solar
+
+    return elapsed, obj, total_co2, total_cost, total_cost_conv, total_cost_wind, total_cost_solar
 end
 
 # Load simulation configurations from JSON.
@@ -95,29 +126,29 @@ config_file = "data/simulations.json"  # Adjust this path to where your JSON fil
 config_data = JSON3.read(open(config_file), Dict{String,Any})
 simulations = config_data["simulations"]
 
-# Prepare DataFrame to store benchmark results.
-results = DataFrame(simulation=Int[], elapsed_time=Float64[], objective_value=Float64[], total_co2=Float64[])
+results = DataFrame(simulation=Int[], elapsed_time=Float64[], objective_value=Float64[],
+                    total_co2=Float64[], total_cost=Float64[],
+                    cost_conv=Float64[], cost_wind=Float64[], cost_solar=Float64[])
 
 default_par = default_parameters()
 
-# Run multiple simulations.
-num_sims = length(simulations)
 for (i, sim) in enumerate(simulations)
-    println(@sprintf("Running simulation %d/%d...", i, num_sims))
+    println(@sprintf("Running simulation %d/%d...", i, length(simulations)))
     sim_par = update_parameters(default_par, sim)
-    elapsed, obj, co2 = benchmark_simulation(sim_par)
-    push!(results, (simulation=i, elapsed_time=elapsed, objective_value=obj, total_co2=co2))
+    elapsed, obj, co2, total_cost, cost_conv, cost_wind, cost_solar = benchmark_simulation(sim_par)
+    push!(results, (simulation=i, elapsed_time=elapsed, objective_value=obj, total_co2=co2,
+                     total_cost=total_cost, cost_conv=cost_conv, cost_wind=cost_wind, cost_solar=cost_solar))
 end
 
 println("Benchmark Results:")
 println(results)
 
-# Example comparison: sort simulations by lowest total CO₂ emissions and lowest objective value.
+# Compare simulations by sorting by key metrics.
 sorted_by_co2 = sort(results, :total_co2)
-sorted_by_cost = sort(results, :objective_value)
+sorted_by_cost = sort(results, :total_cost)
 
 println("\nSimulations sorted by lowest total CO₂ emissions:")
 println(sorted_by_co2)
 
-println("\nSimulations sorted by lowest objective value (cost):")
+println("\nSimulations sorted by lowest total cost:")
 println(sorted_by_cost)
