@@ -15,7 +15,7 @@ pipeline {
         }
         stage('Setup Julia Environment') {
             steps {
-                bat 'julia.exe --project -e "using Pkg; Pkg.instantiate()"'
+                bat 'julia.exe --project -e "using Pkg; Pkg.update(); Pkg.instantiate()"'
                 // Use bat instead of sh
                 bat 'julia.exe --project .\\src\\main.jl'
 
