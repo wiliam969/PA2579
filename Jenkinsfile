@@ -16,13 +16,13 @@ pipeline {
         stage('Setup Julia Environment') {
             steps {
                 // Use bat instead of sh
-                bat 'julia.exe --project -e "using Pkg; Pkg.Registry.update(); Pkg.instantiate()"'
+                bat 'julia.exe .\\src\\main.jl'
 
             }
         }
         stage('Run Tests') {
             steps {
-                bat 'julia.exe --project -e "using Pkg; Pkg.test()"'
+                bat 'julia.exe .\\test\\runtests.jl'
             }
         }
     }
