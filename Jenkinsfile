@@ -16,7 +16,7 @@ pipeline {
         stage('Setup Julia Environment') {
             steps {
                 // Use bat instead of sh
-                bat 'julia.exe .\\src\\main.jl'
+                bat 'julia.exe --project .\\src\\main.jl'
 
             }
         }
