@@ -2,8 +2,8 @@ pipeline {
     agent any
 
      environment {
-        JULIA_PROJECT = "${WORKSPACE}"
-        JULIA_DEPOT_PATH = "${WORKSPACE}\\.julia"  // Use a custom depot path within the workspace
+        JULIA_PROJECT = "C:\\src\\PA2579"
+        JULIA_DEPOT_PATH = "C:\\src\\PA2579\\.julia"  // Use a custom depot path within the workspace
         PATH = "C:\\Users\\wilia\\AppData\\Local\\Programs\\Julia-1.11.4\\bin;${env.PATH}"
     }
     
