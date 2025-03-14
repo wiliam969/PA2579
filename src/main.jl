@@ -49,6 +49,10 @@ struct ModelParameters
     # Detailed solar parameters:
     solar_irradiance::Vector{Float64} # Hourly solar irradiance (W/m^2)
     solar_degradation::Float64        # Solar panel degradation factor (0-1)
+    # New CO₂ emission factors (tonnes CO₂ per MWh)
+    co2_conventional::Float64
+    co2_wind::Float64
+    co2_solar::Float64
 end
 
 # Function to define default parameters and compute wind/solar availability factors
@@ -90,12 +94,17 @@ function default_parameters()
     shutdown_cost = 300.0
     startup_ramp = 0.5
 
+    # --- CO₂ Emission Factors (tonnes per MWh) ---
+    co2_conventional = 0.5  # Example: 0.5 tonnes CO₂ per MWh
+    co2_wind = 0.0          # Wind has near-zero operational emissions
+    co2_solar = 0.0         # Solar likewise
+
     return ModelParameters(T, L, Cup, Cdo, demand, ev_demand, generation_cost,
                            ConvCap, WindCap, wind_avail, SolarCap, solar_avail,
                            E_max, charge_cap, discharge_cap, eta_charge, eta_discharge,
                            startup_cost, shutdown_cost, startup_ramp,
                            wind_speeds, wind_cut_in, wind_rated, wind_cut_out,
-                           solar_irradiance, solar_degradation)
+                           solar_irradiance, solar_degradation,co2_conventional, co2_wind, co2_solar)
 end
 
 # The rest of the model-building functions remain largely unchanged.
@@ -226,6 +235,47 @@ function solve_and_visualize(par::ModelParameters)
     plot(p1, p2, p3, p4, layout=(4,1), legend=:bottomright, size=(1200, 1200))
 end
 
+function solve_and_visualize_co2(par::ModelParameters)
+    model, DSMup, DSMdo, conventional_gen, u, startup, shutdown, wind_gen, solar_gen, charge, discharge, SOC, net_demand = build_model(par)
+    optimize!(model)
+    
+    T = par.T
+    println("Optimal DSM upward shifts:")
+    println(value.(DSMup))
+    println("\nConventional Generation (MW):")
+    println(value.(conventional_gen))
+    println("\nWind Generation (MW):")
+    println(value.(wind_gen))
+    println("\nSolar Generation (MW):")
+    println(value.(solar_gen))
+    
+    # Compute total CO₂ emissions for each energy source
+    total_co2_conventional = sum(value(conventional_gen[t]) * par.co2_conventional for t in 1:T)
+    total_co2_wind         = sum(value(wind_gen[t]) * par.co2_wind for t in 1:T)
+    total_co2_solar        = sum(value(solar_gen[t]) * par.co2_solar for t in 1:T)
+    total_co2 = total_co2_conventional + total_co2_wind + total_co2_solar
+    
+    println("\nTotal CO₂ Emissions (tonnes): ", total_co2)
+    
+    # Additional visualization code (if desired)
+    hours = 1:T
+    DSMdo_sum = [sum(value.(DSMdo[:, t])) for t in 1:T]
+    net_demand_array = [(par.demand[t] + par.ev_demand[t]) + value(DSMup[t]) - DSMdo_sum[t] for t in 1:T]
+    
+    p1 = plot(hours, par.demand, lw=2, marker=:circle, label="Baseline Demand",
+              xlabel="Hour", ylabel="Load (MW)", title="Demand Profiles")
+    plot!(p1, hours, [par.demand[t] + par.ev_demand[t] for t in 1:T], lw=2, marker=:diamond, label="Total Demand (incl. EV)")
+    plot!(p1, hours, net_demand_array, lw=2, marker=:square, label="Net Demand after DSM")
+    
+    p2 = plot(hours, value.(conventional_gen), lw=2, marker=:circle, label="Conventional Gen",
+              xlabel="Hour", ylabel="Generation (MW)", title="Generation Dispatch")
+    plot!(p2, hours, value.(wind_gen), lw=2, marker=:star, label="Wind Gen")
+    plot!(p2, hours, value.(solar_gen), lw=2, marker=:diamond, label="Solar Gen")
+    
+    plot(p1, p2, layout=(2,1), legend=:bottomright, size=(1200, 800))
+end
+
 # Main execution
 par = default_parameters()
 solve_and_visualize(par)
+#solve_and_visualize_co2(par)

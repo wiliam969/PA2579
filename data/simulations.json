@@ -1,0 +1,24 @@
+{
+  "simulations": [
+    { "demand_scale": 0.80, "startup_cost": 450.0, "co2_conventional": 0.40 },
+    { "demand_scale": 0.82, "startup_cost": 455.0, "co2_conventional": 0.41 },
+    { "demand_scale": 0.84, "startup_cost": 460.0, "co2_conventional": 0.42 },
+    { "demand_scale": 0.86, "startup_cost": 465.0, "co2_conventional": 0.43 },
+    { "demand_scale": 0.88, "startup_cost": 470.0, "co2_conventional": 0.44 },
+    { "demand_scale": 0.90, "startup_cost": 475.0, "co2_conventional": 0.45 },
+    { "demand_scale": 0.92, "startup_cost": 480.0, "co2_conventional": 0.46 },
+    { "demand_scale": 0.94, "startup_cost": 485.0, "co2_conventional": 0.47 },
+    { "demand_scale": 0.96, "startup_cost": 490.0, "co2_conventional": 0.48 },
+    { "demand_scale": 0.98, "startup_cost": 495.0, "co2_conventional": 0.49 },
+    { "demand_scale": 1.00, "startup_cost": 500.0, "co2_conventional": 0.50 },
+    { "demand_scale": 1.02, "startup_cost": 505.0, "co2_conventional": 0.51 },
+    { "demand_scale": 1.04, "startup_cost": 510.0, "co2_conventional": 0.52 },
+    { "demand_scale": 1.06, "startup_cost": 515.0, "co2_conventional": 0.53 },
+    { "demand_scale": 1.08, "startup_cost": 520.0, "co2_conventional": 0.54 },
+    { "demand_scale": 1.10, "startup_cost": 525.0, "co2_conventional": 0.55 },
+    { "demand_scale": 1.12, "startup_cost": 530.0, "co2_conventional": 0.56 },
+    { "demand_scale": 1.14, "startup_cost": 535.0, "co2_conventional": 0.57 },
+    { "demand_scale": 1.16, "startup_cost": 540.0, "co2_conventional": 0.58 },
+    { "demand_scale": 1.18, "startup_cost": 545.0, "co2_conventional": 0.59 }
+  ]
+}
