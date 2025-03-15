@@ -37,7 +37,7 @@ pipeline {
 
         stage('Submit to Coveralls') {
             steps{
-                bat 'julia.exe -e "include(\\"submit_coveralls.jl\\")"'
+                bat 'julia.exe -e "include(.\\test\\"submit_coveralls.jl\\")"'
             }
         }
     }
