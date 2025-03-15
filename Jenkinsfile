@@ -7,6 +7,7 @@ pipeline {
         PATH = "C:\\Users\\wilia\\AppData\\Local\\Programs\\Julia-1.11.4\\bin;${env.PATH}"
         COVERALLS_CI = "jenkins"
         CI = "true"
+        COVERALLS_REPO_TOKEN=qlUGERZPR64t3RGZgpUAaNIM6dr6VyNFg
     }
     
     stages {
