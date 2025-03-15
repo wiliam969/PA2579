@@ -23,12 +23,18 @@ pipeline {
         }
         stage('Run Unit Tests') {
             steps {
-                bat 'julia.exe .\\test\\runtests.jl'
+                bat 'julia.exe --code-coverage .\\test\\runtests.jl'
             }
         }
         stage('Run Performance Tests') {
             steps {
                 bat 'julia.exe .\\test\\bmark.jl'
+            }
+        }
+
+        stage('Submit to Coveralls') {
+            steps{
+                bat 'julia.exe -e "using Pkg; using Coverage; Coveralls.submit(process_folder())"' 
             }
         }
     }

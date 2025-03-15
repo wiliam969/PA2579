@@ -1,5 +1,7 @@
 [deps]
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+Coverage = "a2441757-f6aa-5fb2-8edb-039e3f45d037"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 GLPK = "60bf3e95-4087-53dc-ae20-288a0d20c6a6"
 JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
