@@ -6,7 +6,7 @@ pipeline {
         JULIA_DEPOT_PATH = "C:\\src\\PA2579\\.julia"  // Use a custom depot path within the workspace
         PATH = "C:\\Users\\wilia\\AppData\\Local\\Programs\\Julia-1.11.4\\bin;${env.PATH}"
         COVERALLS_CI = "jenkins"
-        CI = "true"
+        CI = true
         COVERALLS_REPO_TOKEN="qlUGERZPR64t3RGZgpUAaNIM6dr6VyNFg"
     }
     
@@ -37,7 +37,7 @@ pipeline {
 
         stage('Submit to Coveralls') {
             steps{
-                bat 'julia.exe -e "begin ENV[\"CI\"] = \"true\"; ENV[\"COVERALLS_CI\"] = \"jenkins\"; using Pkg; using Coverage; Coveralls.submit(process_folder()) end"'
+                bat 'julia.exe -e "using Pkg; using Coverage; Coveralls.submit(process_folder())"'
             }
         }
     }
