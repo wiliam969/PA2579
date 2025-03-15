@@ -37,7 +37,7 @@ pipeline {
 
         stage('Submit to Coveralls') {
             steps{
-                bat 'julia.exe -e "using Pkg; using Coverage; Coveralls.submit_local(process_folder())"'
+                bat 'julia.exe -e "include(\\"submit_coveralls.jl\\")"'
             }
         }
     }
