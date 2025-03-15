@@ -21,9 +21,14 @@ pipeline {
 
             }
         }
-        stage('Run Tests') {
+        stage('Run Unit Tests') {
             steps {
                 bat 'julia.exe .\\test\\runtests.jl'
+            }
+        }
+        stage('Run Performance Tests') {
+            steps {
+                bat 'julia.exe .\\test\\bmark.jl'
             }
         }
     }
