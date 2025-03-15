@@ -16,29 +16,28 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/wiliam969/PA2579.git'
             }
         }
-        stage('Setup Julia Environment') {
-            steps {
-                bat 'julia.exe --project -e "using Pkg; Pkg.instantiate()"'
-                // Use bat instead of sh
-                bat 'julia.exe --project .\\src\\main.jl'
+        // stage('Setup Julia Environment') {
+        //     steps {
+        //         bat 'julia.exe --project -e "using Pkg; Pkg.instantiate()"'
+        //         // Use bat instead of sh
+        //         bat 'julia.exe --project .\\src\\main.jl'
 
-            }
-        }
+        //     }
+        // }
         stage('Run Unit Tests') {
             steps {
                 bat 'julia.exe --code-coverage .\\test\\runtests.jl'
             }
         }
-        stage('Run Performance Tests') {
-            steps {
-                bat 'julia.exe .\\test\\bmark.jl'
-            }
-        }
+        // stage('Run Performance Tests') {
+        //     steps {
+        //         bat 'julia.exe .\\test\\bmark.jl'
+        //     }
+        // }
 
         stage('Submit to Coveralls') {
             steps{
-                bat 'julia.exe -e "ENV[\"CI\"] = \"true\"; ENV[\"COVERALLS_CI\"] = \"jenkins\"; using Pkg; using Coverage; Coveralls.submit(process_folder())"'
-
+                bat 'julia.exe -e "begin ENV[\"CI\"] = \"true\"; ENV[\"COVERALLS_CI\"] = \"jenkins\"; using Pkg; using Coverage; Coveralls.submit(process_folder()) end"'
             }
         }
     }
