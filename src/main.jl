@@ -1,4 +1,4 @@
-using JuMP, GLPK, Plots, CSV, DataFrames
+using JuMP, GLPK, Plots, CSV, DataFrames, Dates
 
 # Helper functions to compute capacity factors
 
@@ -265,7 +265,11 @@ function solve_and_visualize(par::ModelParameters)
     p4 = plot(0:T, [value(SOC[t]) for t in 0:T], lw=2, marker=:circle,
               xlabel="Hour", ylabel="SOC (MWh)", title="Battery State-of-Charge", label="SOC")
     
-    plot(p1, p2, p3, p4, layout=(4,1), legend=:bottomright, size=(1200, 1200))
+    final_plot = plot(p1, p2, p3, p4, layout=(4,1), legend=:bottomright, size=(1200, 1200))
+
+    timestamp = Dates.format(Dates.now(), "yyyy-mm-dd_HH-MM-SS")
+    file_path = joinpath("build", "myplot_$(timestamp).png")
+    savefig(final_plot, file_path)
 end
 
 function solve_and_visualize_co2(par::ModelParameters)
