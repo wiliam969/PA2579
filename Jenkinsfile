@@ -28,7 +28,7 @@ pipeline {
         }
         stage('Run Static Code Analysis') {
             steps {
-                bat 'julia.exe --project -e "using Pkg; using JET; report_file("src/main.jl")"'
+                bat 'julia.exe --project -e "using Pkg; using JET; report_file("src\\main.jl")"'
             }
         }
         stage('Run Performance Tests') {
