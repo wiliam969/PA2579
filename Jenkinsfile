@@ -39,7 +39,7 @@ pipeline {
         stage('Submit to Coveralls') {
             steps{
                 bat 'julia.exe .\\test\\submit_coveralls.jl'
-                bat 'coverage.bat'
+                // bat 'coverage.bat'
             }
         }
         stage('Run PGM') {
