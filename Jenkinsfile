@@ -26,6 +26,11 @@ pipeline {
                 bat 'julia.exe --code-coverage .\\test\\runtests.jl'
             }
         }
+        stage('Run Static Code Analysis') {
+            steps {
+                bat 'julia.exe --project -e "using Pkg; using Jet; report_file("src/main.jl")"'
+            }
+        }
         stage('Run Performance Tests') {
             steps {
                 bat 'julia.exe .\\test\\bmark.jl'
@@ -34,7 +39,7 @@ pipeline {
         stage('Submit to Coveralls') {
             steps{
                 bat 'julia.exe .\\test\\submit_coveralls.jl'
-                bat 'coveralls.exe report .\\coverage-lcov.info --repo-token="qlUGERZPR64t3RGZgpUAaNIM6dr6VyNFg"'
+                bat 'coverage.bat'
             }
         }
         stage('Run PGM') {

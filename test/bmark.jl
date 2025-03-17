@@ -152,3 +152,22 @@ println(sorted_by_co2)
 
 println("\nSimulations sorted by lowest total cost:")
 println(sorted_by_cost)
+
+using Plots, DataFrames
+
+# Assuming `results` is your DataFrame from the benchmark simulations:
+# For example:
+# results = DataFrame(simulation = 1:20, elapsed_time = rand(20) .* 0.1)
+
+# Create a histogram of the elapsed times
+hist = histogram(results.elapsed_time,
+                 bins = 10,
+                 xlabel = "Elapsed Time (seconds)",
+                 ylabel = "Frequency",
+                 title = "Histogram of Benchmark Elapsed Times",
+                 legend = false)
+
+# Save the plot if desired (this will overwrite any existing file)
+savefig(hist, "build/elapsed_time_histogram.png")
+
+display(hist)

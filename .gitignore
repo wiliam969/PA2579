@@ -27,4 +27,4 @@ coverage-lcov.info
 coveralls.exe
 coverage.bat
 build/myplot_2025-03-16_19-18-04.png
-build/plot_6.svg
+build/*
